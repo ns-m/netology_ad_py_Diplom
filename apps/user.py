@@ -4,6 +4,7 @@ from datetime import date, datetime
 import re
 import json
 from sys import exit
+from apps.config import Config
 
 
 class User:
@@ -91,7 +92,7 @@ class User:
     def get_user_access(self):
         url = 'https://oauth.vk.com/authorize'
         params = {
-            'client_id': '171691064',
+            'client_id': Config.id,
             'response_type': 'token',
             'display': 'page',
             'scope': ['groups', 'friends', 'photos'],
@@ -99,13 +100,13 @@ class User:
         }
         print('?'.join((url, urlencode(params))))
         self.token = input('Enter the token from the redirect link: ')
-        write_token('config.json', self.token)
+        write_token(Config, self.token)
 
     def create_session(self):
         try:
-            configuration = take_config('config.json')
-            if configuration['access_token']:
-                session = vk_api.VkApi(token=configuration['access_token'])
+            configuration = take_config(Config)
+            if configuration.access_token:
+                session = vk_api.VkApi(token=configuration.access_token)
                 check = session.get_api()
                 check.users.get(user_ids='1')
                 self.vk_api = check
@@ -163,10 +164,9 @@ class User:
         return search_all
 
 
-def take_config(path_a):
-    with open(path_a, 'r') as config:
-        configuration = json.load(config)
-        return configuration
+def take_config(Config):
+    configuration = Config
+    return configuration
 
 
 def interests_search(interest):

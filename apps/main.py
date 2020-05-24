@@ -5,12 +5,13 @@ from apps.database import Database
 from pprint import pprint
 import psycopg2 as pg
 from sys import exit
+from apps.config import Config
 
 
 def main():
     try:
         try:
-            user_id = take_config('../config.json')['id'] if take_config('config.json')['id'] else input('Input id: ')
+            user_id = Config.id if Config.id else input('Input id: ')
             user = User(user_id)
             user.create_session()
             user.get_main_user_data()

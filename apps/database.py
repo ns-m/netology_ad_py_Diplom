@@ -1,12 +1,13 @@
 import psycopg2 as pg
 from apps.user import take_config
+from apps.config import Config
 
 
 class Database:
 
     def __init__(self):
-        self.data = take_config('config.json')
-        self.db = pg.connect(**self.data['data'])
+        self.data = Config.data
+        self.db = pg.connect(**self.data)
 
     def create_db(self):
         with self.db as conn:
