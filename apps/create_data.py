@@ -31,7 +31,5 @@ class DataMaker:
                     'photo': user['photo'],
                     'link': 'https://vk.com/id{}'.format(user['id'])
                 })
-                if len(json_file) == 10:
+                if len(json_file) > 0 and len(json_file) < 11:
                     return json_file
-
-

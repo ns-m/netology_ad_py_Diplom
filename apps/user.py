@@ -4,7 +4,7 @@ from datetime import date, datetime
 import re
 import json
 from sys import exit
-from apps.config import Config
+from apps.config import cfg, client_id
 
 
 class User:
@@ -50,7 +50,7 @@ class User:
         try:
             self.city = data[0].get('city')['id']
         except TypeError:
-            look = str(input('In which city are we looking for a couple?- '))
+            look = str(input('In which city are we looking for a couple?: '))
             self.take_city_id(look)
 
         interests = data[0].get('interests')
@@ -86,13 +86,13 @@ class User:
         try:
             self.city = cities['items'][0]['id']
         except IndexError:
-            print('City not found')
+            print('*****City not found!')
             exit()
 
     def get_user_access(self):
         url = 'https://oauth.vk.com/authorize'
         params = {
-            'client_id': Config.id,
+            'client_id': client_id,
             'response_type': 'token',
             'display': 'page',
             'scope': ['groups', 'friends', 'photos'],
@@ -100,13 +100,13 @@ class User:
         }
         print('?'.join((url, urlencode(params))))
         self.token = input('Enter the token from the redirect link: ')
-        write_token(Config, self.token)
+        write_token('config.json', self.token)
 
     def create_session(self):
         try:
-            configuration = take_config(Config)
-            if configuration.access_token:
-                session = vk_api.VkApi(token=configuration.access_token)
+            configuration = take_config(cfg)
+            if configuration['access_token']:
+                session = vk_api.VkApi(token=configuration['access_token'])
                 check = session.get_api()
                 check.users.get(user_ids='1')
                 self.vk_api = check
@@ -131,10 +131,9 @@ class User:
             return common_groups
 
     def search_all(self, count=1000):
-
         search_all = []
         search_all_dirt = []
-        search_without_doubles = []
+        search_without_dubl = []
         if self.sex == 1:
             sex = 2
             age_from = self.age
@@ -155,18 +154,19 @@ class User:
             search = self.vk_api.users.search(age_from=age_from + j, **param)['items']
             search_all_dirt += search
         for people in search_all_dirt:
-            if people not in search_without_doubles:
-                search_without_doubles.append(people)
-        for people in search_without_doubles:
+            if people not in search_without_dubl:
+                search_without_dubl.append(people)
+        for people in search_without_dubl:
             if not people['is_closed']:
                 people.update({'weight': 0})
                 search_all.append(people)
         return search_all
 
 
-def take_config(Config):
-    configuration = Config
-    return configuration
+def take_config(path_a):
+    with open(path_a, 'r') as config:
+        configuration = json.load(config)
+        return configuration
 
 
 def interests_search(interest):

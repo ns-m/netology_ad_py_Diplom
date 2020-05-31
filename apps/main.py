@@ -2,16 +2,16 @@ from apps.user import User, take_config
 from apps.sort_couple import Criteria
 from apps.create_data import DataMaker
 from apps.database import Database
+from apps.config import cfg
 from pprint import pprint
 import psycopg2 as pg
 from sys import exit
-from apps.config import Config
 
 
 def main():
     try:
         try:
-            user_id = Config.id if Config.id else input('Input id: ')
+            user_id = take_config(cfg)['id'] if take_config(cfg)['id'] else input('Input id: ')
             user = User(user_id)
             user.create_session()
             user.get_main_user_data()

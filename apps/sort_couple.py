@@ -2,7 +2,7 @@ import re
 from collections import Counter
 from datetime import datetime
 from apps.user import take_config, calculate_age
-
+from apps.config import cfg_db
 
 
 class Criteria:
@@ -12,7 +12,7 @@ class Criteria:
         self.user_list = user_list
         self.without_close = []
         self.with_groups = []
-        self.criteria = take_config('database_files/weight_parameters.json')
+        self.criteria = take_config(cfg_db)
 
     def users_with_common_groups(self):
         user_ids = [i['id'] for i in self.user_list]
@@ -39,27 +39,27 @@ class Criteria:
                     regex = re.compile(f'{item}')
                     match = re.search(regex, people['interests'])
                     if match:
-                        people['weight'] += self.criteria['interests']
+                        people['weight'] += self.criteria.get('interests')
 
             if people.get('books'):
                 for item in self.user.books:
                     regex = re.compile(f'({item})')
                     match = re.search(regex, people['books'])
                     if match:
-                        people['weight'] += self.criteria['books']
+                        people['weight'] += self.criteria.get('books')
 
             if people.get('music'):
                 for item in self.user.music:
                     regex = re.compile(f'({item})')
                     match = re.search(regex, people['music'])
                     if match:
-                        people['weight'] += self.criteria['music']
+                        people['weight'] += self.criteria.get('music')
 
             try:
                 day, month, year = people.get('bdate').split('.')
                 age = calculate_age(datetime(year=int(year), month=int(month), day=int(day)))
                 if age == self.user.age:
-                    people['weight'] += self.criteria['age']
+                    people['weight'] += self.criteria.get('age')
             except Exception:
                 continue
 
@@ -76,10 +76,3 @@ class Criteria:
 
 if __name__ == '__main__':
     pass
-
-
-
-
-
-
-

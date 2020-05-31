@@ -1,8 +1,9 @@
 import unittest
 from apps import user, database
 import psycopg2 as pg
+from apps.config import cfg
 
-PATH = '../config.json'
+PATH = cfg
 
 
 class TestData(unittest.TestCase):
@@ -14,8 +15,8 @@ class TestData(unittest.TestCase):
 
     def test_init(self):
         with self.assertRaises(TypeError):
-            self.user = user.User('171691064')
-            # self.user = user.User('')
+            self.user = user.User('544454')
+            self.user = user.User()
 
     def test_have_config(self):
         self.assertTrue(type(self.config) == dict)

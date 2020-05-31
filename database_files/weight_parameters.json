@@ -1,7 +1,7 @@
 {"age": 1,
-  "friends": 1.4,
-  "groups": 0.4,
-  "interests": 0.3,
+  "friends": 1.2,
+  "groups": 0.3,
+  "interests": 0.1,
   "books": 0.1,
-  "music": 0.1
+  "music": 0.15
 }
