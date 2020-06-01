@@ -33,4 +33,4 @@ class DataMaker:
                 })
                 if len(json_file) == 10:
                     break
-                return json_file
+        return json_file
